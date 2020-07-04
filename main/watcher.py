@@ -78,7 +78,7 @@ class Watcher():
                     observer.extend(self.latests)
                 self.latests.clear()
                 
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.1)
 
     # Start backend thread
     def watch(self):

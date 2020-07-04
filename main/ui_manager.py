@@ -241,6 +241,7 @@ class UIManager():
         self.file_builder.deleteFromFile('./data/manga.json', manga)
         self.main_window.mangaList.takeItem(
             self.main_window.mangaList.currentIndex().row())
+        self.manga_list.remove(manga)
         self.stackedWidget.setCurrentIndex(0)
 
     # Show manga info
@@ -316,6 +317,16 @@ class UIManager():
             }
             # Write to the file
             self.file_builder.writeToFile('./data/manga.json', data)
+            
+            # Clear all textEdits and comboBoxes
+            self.main_window.mangaUrlEdit.clear()
+            self.main_window.comboBox.setCurrentIndex(0)
+
+            # Show complete message
+            message_box = QtWidgets.QMessageBox()
+            message_box.setWindowTitle('Оповещение')
+            message_box.setText('Манга добавлена в список!')
+            message_box.exec()
 
     # Hide main window
     def __hide_main_window(self):
