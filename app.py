@@ -3,10 +3,12 @@
 # from ui.main_window import Ui_MainWindow
 from main.ui_manager import UIManager
 from main.watcher import Watcher
+from utilities.update_manager import UpdateManager 
 
 if __name__ == "__main__":
     watcher = Watcher()
-    ui_manager = UIManager()
+    um = UpdateManager()
+    ui_manager = UIManager(um)
 
     watcher.add_manga_observer(ui_manager.manga_changes)
     watcher.add_sites_observer(ui_manager.manga_sites)

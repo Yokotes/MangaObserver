@@ -9,7 +9,10 @@ import time
 import urllib
 
 class UIManager():
-    def __init__(self):
+    def __init__(self, update_manager):
+        # Initialize update manager
+        self.update_manager = update_manager
+
         # Initialize all windows and forms
         self.__init_main_window()
         self.__init_manga_site_form()
@@ -331,8 +334,12 @@ class UIManager():
     # Hide main window
     def __hide_main_window(self):
         self.MainWindow.hide()
-        self.trayIcon.showMessage('Приложение MangaWatcher работает в свернутов режиме',
+        self.trayIcon.showMessage('Приложение MangaWatcher работает в свернутом режиме',
                                     '↓', QtGui.QIcon('./img/logo.png'))
+
+    def close_app(self):
+        self.update_manager.watch_version()
+        self.MainWindow.close()
 
     # Initialize main window
     def __init_main_window(self):
@@ -345,6 +352,7 @@ class UIManager():
         self.main_window.setupUi(self.MainWindow)
         self.MainWindow.show()
         self.main_window.mangaList.setIconSize(QtCore.QSize(50, 50))
+        self.main_window.label_16.setText('ver.' + self.update_manager.current_version)
         self.trayIcon = QtWidgets.QSystemTrayIcon(QtGui.QIcon('./img/logo.png'))
         self.trayIcon.setParent(self.app)
         self.trayIcon.show()
@@ -356,7 +364,7 @@ class UIManager():
         open_action.triggered.connect(
             lambda: self.MainWindow.show())
         exit_action.triggered.connect(
-            lambda: self.MainWindow.close())
+            lambda: self.close_app())
 
     # Initialize manga site settings form
     def __init_manga_site_form(self):
