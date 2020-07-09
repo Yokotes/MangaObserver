@@ -1,5 +1,5 @@
-from utilities.manga_parser import MangaParser
-from utilities.file_builder import File_Builder
+from ..utilities.manga_parser import MangaParser
+from ..utilities.file_builder import File_Builder
 import asyncio
 
 class Manga():

@@ -1,8 +1,7 @@
 from lxml import etree
 import urllib.request
 import asyncio
-from utilities.file_builder import File_Builder
-
+from .file_builder import File_Builder
 
 class MangaParser():
     def __init__(self):

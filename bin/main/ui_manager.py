@@ -1,10 +1,10 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from ui.main_window import Ui_MainWindow
-from ui.manga_site_form import Ui_MangaSiteForm
+from ..ui.main_window import Ui_MainWindow
+from ..ui.manga_site_form import Ui_MangaSiteForm
 import sys
 import webbrowser
-from utilities.file_builder import File_Builder
-from utilities.xpath_optimizer import XpathOptimizer
+from ..utilities.file_builder import File_Builder
+from ..utilities.xpath_optimizer import XpathOptimizer
 import time
 import urllib
 
@@ -94,7 +94,7 @@ class UIManager():
                     if item != None: 
                         item.setBackground(QtGui.QColor.fromRgbF(0, 0.8, 0, 0.3))
                     time.sleep(1)
-                    self.trayIcon.showMessage('Вышла новая глава!', name, QtGui.QIcon('./img/logo.png'))
+                    self.trayIcon.showMessage('Вышла новая глава!', name)
                     self.latests.remove(name)
             time.sleep(1)
 
@@ -335,7 +335,7 @@ class UIManager():
     def __hide_main_window(self):
         self.MainWindow.hide()
         self.trayIcon.showMessage('Приложение MangaWatcher работает в свернутом режиме',
-                                    '↓', QtGui.QIcon('./img/logo.png'))
+                                    '↓', QtGui.QIcon(QtGui.QPixmap('./img/logo.png')))
 
     def close_app(self):
         self.update_manager.watch_version()
@@ -353,7 +353,7 @@ class UIManager():
         self.MainWindow.show()
         self.main_window.mangaList.setIconSize(QtCore.QSize(50, 50))
         self.main_window.label_16.setText('ver.' + self.update_manager.current_version)
-        self.trayIcon = QtWidgets.QSystemTrayIcon(QtGui.QIcon('./img/logo.png'))
+        self.trayIcon = QtWidgets.QSystemTrayIcon(QtGui.QIcon(QtGui.QPixmap('./img/logo.png')))
         self.trayIcon.setParent(self.app)
         self.trayIcon.show()
         self.trayIcon.setToolTip('MangaWatcher is working...')

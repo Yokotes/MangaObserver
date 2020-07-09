@@ -1,7 +1,7 @@
-from utilities.file_builder import File_Builder
-from other.manga_site import MangaSite
-from utilities.manga_parser import MangaParser
-from other.manga import Manga
+from ..utilities.manga_parser import MangaParser
+from ..utilities.file_builder import File_Builder
+from ..other.manga import Manga
+from ..other.manga_site import MangaSite
 from PyQt5 import QtCore, QtWidgets
 import asyncio
 import time

@@ -1,9 +1,9 @@
 # import sys
 # from PyQt5 import QtCore, QtGui, QtWidgets, Qt
 # from ui.main_window import Ui_MainWindow
-from main.ui_manager import UIManager
-from main.watcher import Watcher
-from utilities.update_manager import UpdateManager 
+from bin.main.ui_manager import UIManager
+from bin.main.watcher import Watcher
+from bin.utilities.update_manager import UpdateManager
 
 if __name__ == "__main__":
     watcher = Watcher()
