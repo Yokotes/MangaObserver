@@ -38,6 +38,7 @@ class UIManager():
         self.manga_list = []
         self.manga_sites = []
         self.latests = []
+        self.manga_sites_dict = {}
 
         # Base variables from main window
         self.stackedWidget = self.main_window.stackedWidget
@@ -81,9 +82,19 @@ class UIManager():
                     for i in range(self.main_window.mangaList.count(),
                                     len(self.manga_list)):
                         manga = self.manga_list[i]
+                        manga_site = manga.site
+
+                        # Fill manga sites dict
+                        if manga_site.name in self.manga_sites_dict:
+                            self.manga_sites_dict[manga_site.name] += 1
+                        else:
+                            self.manga_sites_dict[manga_site.name] = 1
+
+                        # Fill manga list
                         if manga.data['name'] == 'New item': continue
                         item = QtWidgets.QListWidgetItem()
-                        item.setText(manga.data['name'])
+                        item.setText(manga.data['name'] +'\n('+ manga_site.name+')')
+                        pixmap = QtGui.QPixmap()
                         try:
                             hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
                                     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -91,12 +102,18 @@ class UIManager():
                                     'Accept-Encoding': 'none',
                                     'Accept-Language': 'en-US,en;q=0.8',
                                     'Connection': 'keep-alive'}
-                            req = urllib.request.Request(manga.data['info']['img'][0], headers=hdr)
+
+                            img_url = manga.data['info']['img'][0]
+                            if img_url[0] == '/':
+                                help_url = manga.data['url'].split('/')[2]
+                                img_url = 'https://' + help_url + img_url
+
+                            req = urllib.request.Request(img_url, headers=hdr)
                             v = urllib.request.urlopen(req)
-                            pixmap = QtGui.QPixmap()
                             pixmap.loadFromData(v.read())
                         except:
-                            pixmap = None
+                            pixmap.load('./img/image_placeholder.jpg')
+
                         item.setIcon(QtGui.QIcon(pixmap))
                         self.main_window.mangaList.insertItem(i, item)
                         time.sleep(0.01)
@@ -106,22 +123,25 @@ class UIManager():
                 for name in self.latests:
                     items = self.main_window.mangaList.findItems(
                         name, QtCore.Qt.MatchFlags())
-                    if type(items) is list: item = items[0]
+                    if type(items) is list and items != []: item = items[0]
                     if item != None: 
                         item.setBackground(QtGui.QColor.fromRgbF(0, 0.8, 0, 0.3))
                     time.sleep(1)
-                    self.trayIcon.showMessage('Вышла новая глава!', name, QtGui.QIcon(QtGui.QPixmap('./img/logo.png')))
+                    self.trayIcon.showMessage('Вышла новая глава!', name, 
+                        QtGui.QIcon(QtGui.QPixmap('./img/logo.png')))
                     self.latests.remove(name)
-            time.sleep(1)
+            time.sleep(1.5)
 
     # ==================================
     #   Windows and forms behavior
     # ==================================
+
     # Setting main window's elements behavior
     def __set_main_window_behavior(self):
         # ===============================
         #   Window header
         # ===============================
+
         # Close button behavior
         self.main_window.closeBtn.clicked.connect(
             lambda: self.__hide_main_window())
@@ -133,6 +153,7 @@ class UIManager():
         # ===============================
         #   Start page
         # ===============================
+
         # Go to add manga site page
         self.main_window.goToAddMangaSite.clicked.connect(
             lambda: self.stackedWidget.setCurrentIndex(4))
@@ -148,6 +169,7 @@ class UIManager():
         # ===============================
         #   Add manga page
         # ===============================
+
         # Go to add manga site page
         self.main_window.goToMangaSitePageBtn.clicked.connect(
             lambda: self.stackedWidget.setCurrentIndex(4))
@@ -162,6 +184,7 @@ class UIManager():
         # ===============================   
         #   Manga sites page
         # ===============================
+
         # Open add manga site form
         self.main_window.addMangaSite.clicked.connect(
             lambda: self.__add_new_site())
@@ -182,6 +205,7 @@ class UIManager():
         # ===============================   
         #   Manga info page
         # ===============================
+
         # Open info by clicking on manga list item
         self.main_window.mangaList.itemClicked.connect(self.__show_manga_info)
         
@@ -282,11 +306,22 @@ class UIManager():
     # Delete manga site
     def __delete_manga_site(self):
         index = self.main_window.listWidget.currentIndex().row()
-        site = self.manga_sites[index]
-        self.file_builder.deleteFromFile('./data/manga_sites.json', site)
-        item = self.main_window.listWidget.item(index)
-        self.main_window.listWidget.removeItemWidget(item)
+        site = self.manga_sites.pop(index)
 
+        # Create messagebox
+        message_box = QtWidgets.QMessageBox()
+        message_box.setWindowTitle('Оповещение')
+        
+        # Check if manga exist in manga site
+        if site.name not in self.manga_sites_dict or self.manga_sites_dict[site.name] == 0:
+            self.file_builder.deleteFromFile('./data/manga_sites.json', site)
+            self.main_window.listWidget.takeItem(index)
+            message_box.setText('Сайт удален из списка!')
+        else:
+            message_box.setText('Перед удалением сайта необходимо удалить мангу!')
+
+        message_box.exec()
+        
     # Open manga site form for adding new manga site
     def __add_new_site(self):
         self.manga_site_form.siteNameEdit.setText('')
@@ -353,9 +388,11 @@ class UIManager():
         self.trayIcon.showMessage('Приложение MangaWatcher работает в свернутом режиме',
                                     '↓', QtGui.QIcon(QtGui.QPixmap('./img/logo.png')))
 
+    # Closing app and check version
     def close_app(self):
-        self.update_manager.watch_version()
         self.MainWindow.close()
+        self.MangaSiteForm.close()
+        self.update_manager.watch_version()
 
     # Initialize main window
     def __init_main_window(self):

@@ -27,8 +27,10 @@ class XpathOptimizer():
         elem_id = elem.get('id')
         if elem_class == None and elem_id == None:
             removed_part = list(path.split('/')).pop(len(path.split('/'))-1)
-            r.append(removed_part)
-            xpath = '/'.join(list(path.split('/')).remove(removed_part))
+            r.insert(0, removed_part)
+            splited_path = path.split('/')
+            splited_path.remove(removed_part)
+            xpath = '/'.join(splited_path)
             return self.__shorten_path(tree, xpath, r)
         elif elem_class == None:
             return "//*[@id='" + elem_id + "']/" + "/".join(r)
@@ -45,21 +47,48 @@ class XpathOptimizer():
         optimized_xpaths = []
         for xpath in manga_site['xpaths']:
             current_xpath = manga_site['xpaths'][xpath]
+            
+            # Delete useless parts
+            if '/text()' in current_xpath:
+                current_xpath = current_xpath.replace('/text()', '')
+            if '/tbody' in current_xpath:
+                current_xpath = current_xpath.replace('/tbody', '')
             if '/@src' in current_xpath:
                 current_xpath = current_xpath.replace('/@src', '')
-            elem = tree.xpath(current_xpath)[0]
+            
+            # Getting all elems by xpath
+            elems_list = tree.xpath(current_xpath)
+
+            # Check elems count
+            if elems_list == []:
+                optimized_xpaths.append(current_xpath)
+                continue
+
+            # Getting elems data
+            elem = elems_list[0]
             tag = elem.tag
-            if tag == 'img' or 'h' in tag or tag == 'a' or elem.get('class') == None:
+
+            # Optimizing paths
+            if ((tag == 'img' or 'h' in tag or tag == 'a' or 
+                elem.get('class') == None) and len(current_xpath.split('/')) > 3):
                 list_xpath = current_xpath.split('/')
                 removed_part = list_xpath.pop(len(list_xpath)-1)
-                kek = '/'.join(list_xpath)
-                shorten_xpath = self.__shorten_path(tree, kek, [removed_part,])
-                if tag == 'img': 
-                    shorten_xpath += '/@src'
+                path = '/'.join(list_xpath)
+                shorten_xpath = self.__shorten_path(tree, path, [removed_part,])
             else:
                 elem_class = elem.get('class')
-                shorten_xpath = "//*[@class='" + elem_class + "']"
+                elem_id = elem.get('id')
+                if elem_class == None:
+                    shorten_xpath = "//*[@id='" + elem_id + "']"
+                else:
+                    shorten_xpath = "//*[@class='" + elem_class + "']"
+
+            if tag == 'img': 
+                    shorten_xpath += '/@src'
+
             optimized_xpaths.append(shorten_xpath)
+        
+        # Convert optimized xpaths to manga_site format
         data = {
             'name': manga_site['name'],
             'optimized': True,

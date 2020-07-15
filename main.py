@@ -13,12 +13,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #========================================================================== 
+
 import os.path as path
 
-if path.isfile('main.py'):
-    from main import main
+if path.exists('./bin'):
+    from bin.main.ui_manager import UIManager
+    from bin.main.watcher import Watcher
+    from bin.utilities.update_manager import UpdateManager
 else:
-    raise FileNotFoundError('File main.py not found!')
+    raise OSError("Folder bin isn't exist!")
 
-if __name__ == "__main__":
-    main()
+def main():
+    watcher = Watcher()
+    um = UpdateManager()
+    ui_manager = UIManager(um)
+    
+    watcher.add_manga_observer(ui_manager.manga_changes)
+    watcher.add_sites_observer(ui_manager.manga_sites)
+    watcher.add_latest_observer(ui_manager.latests)
+
+    watcher.watch()
+    ui_manager.start()

@@ -31,7 +31,7 @@ class MangaParser():
         if page == '': return page
         html_parser = etree.HTMLParser()
         tree = etree.parse(page, html_parser)
-        
+
         data = {
             'title': (tree.xpath(manga_site.xpaths['title'])[0]).text if tree.xpath(manga_site.xpaths['title']) else url,
             'info': {
