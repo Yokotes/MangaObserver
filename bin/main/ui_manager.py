@@ -59,8 +59,10 @@ class UIManager():
     # Update loop
     def __update_loop(self):
         while True:
+
             # Check sites changes
             if len(self.manga_sites) > 0:
+
                 # Fill sites list
                 if self.main_window.listWidget.count() < len(self.manga_sites):
                     for i in range(self.main_window.listWidget.count(),
@@ -78,6 +80,7 @@ class UIManager():
                 self.manga_list.clear()
                 self.manga_list.extend(self.manga_changes)
                 if self.main_window.mangaList.count() < len(self.manga_list):
+
                     # Fill manga list widget
                     for i in range(self.main_window.mangaList.count(),
                                     len(self.manga_list)):
@@ -122,7 +125,7 @@ class UIManager():
             if len(self.latests) > 0 and self.main_window.mangaList.count() > 0:
                 for name in self.latests:
                     items = self.main_window.mangaList.findItems(
-                        name, QtCore.Qt.MatchFlags())
+                        name, QtCore.Qt.MatchContains)
                     if type(items) is list and items != []: item = items[0]
                     if item != None: 
                         item.setBackground(QtGui.QColor.fromRgbF(0, 0.8, 0, 0.3))
