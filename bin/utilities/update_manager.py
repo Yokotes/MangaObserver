@@ -44,8 +44,9 @@ class UpdateManager():
 
             for commit in repo.traverse_commits():
                 for mod in commit.modifications:
-                    try:
-                        with open('./'+mod.new_path, 'w', encoding='utf-8') as file:
-                            file.write(mod.source_code)
-                    except:
-                        return None
+                    if not 'manga.json' in mod.filename and not 'manga_sites.json' in mod.filename:
+                        try:
+                            with open('./'+mod.new_path, 'w', encoding='utf-8') as file:
+                                file.write(mod.source_code)
+                        except:
+                            return None
