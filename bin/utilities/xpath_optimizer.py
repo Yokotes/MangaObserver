@@ -14,7 +14,7 @@
 # limitations under the License.
 #========================================================================== 
 
-from lxml import etree
+from lxml import html
 import urllib
 
 class XpathOptimizer():
@@ -25,7 +25,7 @@ class XpathOptimizer():
         elem = tree.xpath(path)[0]
         elem_class = elem.get('class')
         elem_id = elem.get('id')
-        if elem_class == None and elem_id == None:
+        if elem_class is None and elem_id is None:
             removed_part = list(path.split('/')).pop(len(path.split('/'))-1)
             r.insert(0, removed_part)
             splited_path = path.split('/')
@@ -40,9 +40,12 @@ class XpathOptimizer():
     # Optimize all manga site xpaths
     def optimize_xpaths(self, manga_site):
         page = self.__get_page(manga_site['test_link'])
-        if page == '': return None
-        html_parser = etree.HTMLParser()
-        tree = etree.parse(page, html_parser)
+        if page is None: return None
+
+        try:
+            tree = html.fromstring(page)
+        except: 
+            return None
 
         optimized_xpaths = []
         for xpath in manga_site['xpaths']:
@@ -112,6 +115,7 @@ class XpathOptimizer():
             'Connection': 'keep-alive'}
         try:
             req = urllib.request.Request(url, headers=hdr)
-            page = urllib.request.urlopen(req)
-        except: return ''
-        return page
+            with urllib.request.urlopen(req) as response:
+                return response.read()
+        except: 
+            return None

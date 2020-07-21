@@ -14,7 +14,7 @@
 # limitations under the License.
 #========================================================================== 
 
-from lxml import etree
+from lxml import html
 import urllib.request
 import asyncio
 from .file_builder import File_Builder
@@ -28,19 +28,27 @@ class MangaParser():
     def parseUrl(self, manga_site, url):
         loop = asyncio.get_event_loop()
         page = yield from loop.run_in_executor(None, lambda: self.get_page(url))
-        if page == '': return page
-        html_parser = etree.HTMLParser()
-        tree = etree.parse(page, html_parser)
+        if page is None: return ''
+        data = ''
 
-        data = {
-            'title': (tree.xpath(manga_site.xpaths['title'])[0]).text if tree.xpath(manga_site.xpaths['title']) else url,
-            'info': {
-                'latest': (tree.xpath(manga_site.xpaths['latest'])[0]).text if tree.xpath(manga_site.xpaths['latest']) else "Can't get a latest",
-                'img': tree.xpath(manga_site.xpaths['img']),
-                'descr': (tree.xpath(manga_site.xpaths['descr'])[0]).text if tree.xpath(manga_site.xpaths['descr']) else "Can't get a descr"
+        try:
+            tree = html.fromstring(page)
+            # tree = etree.parse(page, html_parser)
+            # tree = ElementTree.parse(page, html_parser)
+            # print(tree)
+
+            data = {
+                'title': (tree.xpath(manga_site.xpaths['title'])[0]).text if tree.xpath(manga_site.xpaths['title']) else url,
+                'info': {
+                    'latest': (tree.xpath(manga_site.xpaths['latest'])[0]).text if tree.xpath(manga_site.xpaths['latest']) else "Can't get a latest",
+                    'img': tree.xpath(manga_site.xpaths['img']),
+                    'descr': (tree.xpath(manga_site.xpaths['descr'])[0]).text if tree.xpath(manga_site.xpaths['descr']) else "Can't get a descr"
+                }
             }
-        }
-        return data
+        except:
+            pass
+        finally:
+            return data
 
     # Get HTML from url
     def get_page(self, url):
@@ -50,8 +58,10 @@ class MangaParser():
             'Accept-Encoding': 'none',
             'Accept-Language': 'en-US,en;q=0.8',
             'Connection': 'keep-alive'}
+        
         try:
             req = urllib.request.Request(url, headers=hdr)
-            page = urllib.request.urlopen(req)
-        except: return ''
-        return page
+            with urllib.request.urlopen(req) as response:
+                return response.read()
+        except: 
+            return None

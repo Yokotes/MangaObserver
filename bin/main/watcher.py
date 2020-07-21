@@ -71,7 +71,7 @@ class Watcher():
                     self.manga_sites_list.append(ms)
 
             # Convert raw mangas data
-            if raw_manga != None:
+            if raw_manga is not None:
                 for manga in raw_manga:
                     site = list(filter(lambda x: x if x.name == manga['site'] else None, list(self.manga_sites_list)))
                     new_manga = Manga(site[0], manga)
@@ -102,17 +102,17 @@ class Watcher():
 
     # Get inner observator's variable
     def add_manga_observer(self, observer):
-        if not observer in self.manga_observers:
+        if observer not in self.manga_observers:
             self.manga_observers.append(observer)
 
     # Get inner observator's variable
     def add_sites_observer(self, observer):
-        if not observer in self.sites_observers:
+        if observer not in self.sites_observers:
             self.sites_observers.append(observer)
     
     # Get inner observator's variable
     def add_latest_observer(self, observer):
-        if not observer in self.latest_observers:
+        if observer not in self.latest_observers:
             self.latest_observers.append(observer)
 
 # BackendThread
@@ -125,5 +125,5 @@ class BackendThread(QtCore.QThread):
     def run(self):
         while self.value < 100:
             self.value += 1
-            if self.func != None: self.func()
+            if self.func is not None: self.func()
             time.sleep(0.03)

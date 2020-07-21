@@ -59,7 +59,6 @@ class UIManager():
     # Update loop
     def __update_loop(self):
         while True:
-
             # Check sites changes
             if len(self.manga_sites) > 0:
 
@@ -112,8 +111,9 @@ class UIManager():
                                 img_url = 'https://' + help_url + img_url
 
                             req = urllib.request.Request(img_url, headers=hdr)
-                            v = urllib.request.urlopen(req)
-                            pixmap.loadFromData(v.read())
+                            with urllib.request.urlopen(req) as response:
+                                image = response.read()
+                            pixmap.loadFromData(image)
                         except:
                             pixmap.load('./img/image_placeholder.jpg')
 
@@ -273,7 +273,7 @@ class UIManager():
             optimized_site = self.optimizer.optimize_xpaths(data)
 
             # Write new manga site to the file
-            if optimized_site != None:
+            if optimized_site is not None:
                 self.file_builder.writeToFile(
                     file='./data/manga_sites.json', data=optimized_site)
             
@@ -289,6 +289,8 @@ class UIManager():
             self.main_window.mangaList.currentIndex().row())
         self.manga_list.remove(manga)
         self.stackedWidget.setCurrentIndex(0)
+        self.manga_sites_dict[manga.site.name] -= 1
+        print(manga.site.name)
 
     # Show manga info
     def __show_manga_info(self, item):
@@ -310,6 +312,7 @@ class UIManager():
     def __delete_manga_site(self):
         index = self.main_window.listWidget.currentIndex().row()
         site = self.manga_sites.pop(index)
+        self.main_window.comboBox.removeItem(index)
 
         # Create messagebox
         message_box = QtWidgets.QMessageBox()
@@ -418,7 +421,7 @@ class UIManager():
         exit_action = context_menu.addAction('Закрыть')
         self.trayIcon.setContextMenu(context_menu)
         open_action.triggered.connect(
-            lambda: self.MainWindow.show())
+            self.MainWindow.show)
         exit_action.triggered.connect(
             lambda: self.close_app())
 

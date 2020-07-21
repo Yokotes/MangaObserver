@@ -33,8 +33,10 @@ class Manga():
         result = await self.parser.parseUrl(self.site, self.data['url'])
         if result != '':
             self.data['name'] = result['title']
+
             if old_data != result['info']['latest']:
-                latests_list.append(self.data['name'])
+                latests_list.append(self.data['name'] + '\n('+ self.site.name+')')
+
             self.data['info']['latest'] = result['info']['latest']
             self.data['info']['descr'] = result['info']['descr']
             self.data['info']['img'] = result['info']['img']
