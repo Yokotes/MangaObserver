@@ -391,7 +391,7 @@ class UIManager():
     # Hide main window
     def __hide_main_window(self):
         self.MainWindow.hide()
-        self.trayIcon.showMessage('Приложение MangaWatcher работает в свернутом режиме',
+        self.trayIcon.showMessage('Приложение MangaObserver работает в свернутом режиме',
                                     '↓', QtGui.QIcon(QtGui.QPixmap('./img/logo.png')))
 
     # Closing app and check version
@@ -415,9 +415,9 @@ class UIManager():
         self.trayIcon = QtWidgets.QSystemTrayIcon(QtGui.QIcon(QtGui.QPixmap('./img/logo.png')))
         self.trayIcon.setParent(self.app)
         self.trayIcon.show()
-        self.trayIcon.setToolTip('MangaWatcher is working...')
+        self.trayIcon.setToolTip('MangaObserver работает...')
         context_menu = QtWidgets.QMenu('Menu')
-        open_action = context_menu.addAction('Открыть MangaWatcher')
+        open_action = context_menu.addAction('Открыть MangaObserver')
         exit_action = context_menu.addAction('Закрыть')
         self.trayIcon.setContextMenu(context_menu)
         open_action.triggered.connect(

@@ -495,9 +495,9 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MangaWatcher"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "MangaObserver"))
         self.addMangaBtn_3.setText(_translate("MainWindow", "Добавить мангу"))
-        self.label.setText(_translate("MainWindow", "Manga Watcher"))
+        self.label.setText(_translate("MainWindow", "Manga Observer"))
         self.authorLink.setText(_translate("MainWindow", "@Viktor Borzov"))
         self.goToAddMangaSite.setText(_translate("MainWindow", "Добавить сайт  🡢"))
         self.label_11.setText(_translate("MainWindow", "Добавьте сайт манги"))
