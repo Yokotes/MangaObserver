@@ -113,9 +113,11 @@ class XpathOptimizer():
             'Accept-Encoding': 'none',
             'Accept-Language': 'en-US,en;q=0.8',
             'Connection': 'keep-alive'}
+        data = None
         try:
             req = urllib.request.Request(url, headers=hdr)
             with urllib.request.urlopen(req) as response:
-                return response.read()
+                data = response.read()
+            return data
         except: 
             return None

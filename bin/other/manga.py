@@ -16,7 +16,6 @@
 
 from ..utilities.manga_parser import MangaParser
 from ..utilities.file_builder import File_Builder
-import asyncio
 
 class Manga():
     def __init__(self, manga_site, data=None):
@@ -25,12 +24,12 @@ class Manga():
         self.parser = MangaParser()
         self.fb = File_Builder()
 
-    # Async update function
-    async def update(self, latests_list):
+    # Update function
+    def update(self, latests_list):
         old_data = self.data['info']['latest']
         result = ''
         # Get data from parser
-        result = await self.parser.parseUrl(self.site, self.data['url'])
+        result = self.parser.parseUrl(self.site, self.data['url'])
         if result != '':
             self.data['name'] = result['title']
 
@@ -53,4 +52,4 @@ class Manga():
                 }
             }
             # Write data to the manga.json file
-            if old_data != result['info']['latest'] or self.data['name'] == 'New item': await self.fb.writeToFileAsync('./data/manga.json', file_data)
+            if old_data != result['info']['latest'] or self.data['name'] == 'New item': self.fb.writeToFile('./data/manga.json', file_data)
