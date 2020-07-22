@@ -32,13 +32,16 @@ class Watcher():
         self.manga_observers = []
         self.sites_observers = []
         self.latest_observers = []
+        self.running = False
 
     # Main backend loop
     def __backendLoop(self):
-        self.loop = asyncio.new_event_loop()
-        self.loop.create_task(self.__getData())
-        self.loop.create_task(self.__updateManga())
-        self.loop.run_forever()
+        if not self.running:
+            self.loop = asyncio.new_event_loop()
+            self.loop.create_task(self.__getData())
+            self.loop.create_task(self.__updateManga())
+            self.loop.run_forever()
+            self.running = True
 
     # Async update mangas in file
     async def __updateManga(self):
@@ -46,9 +49,9 @@ class Watcher():
             tasks = []
             for manga in self.manga_list:
                 tasks.append(manga.update(self.latests))
-            
-            if len(tasks) > 0: await asyncio.wait(tasks)
-            await asyncio.sleep(1)
+
+            await asyncio.wait(tasks)
+        self.running = False
 
     # Async get data from files and fill variables
     async def __getData(self):
@@ -95,6 +98,8 @@ class Watcher():
                 self.latests.clear()
                 
             await asyncio.sleep(0.1)
+
+        self.running = False
 
     # Start backend thread
     def watch(self):
