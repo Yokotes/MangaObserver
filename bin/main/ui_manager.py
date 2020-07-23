@@ -22,7 +22,7 @@ import webbrowser
 from ..utilities.file_builder import File_Builder
 from ..utilities.xpath_optimizer import XpathOptimizer
 import time
-import urllib
+import requests
 
 class UIManager():
     def __init__(self, update_manager):
@@ -110,9 +110,9 @@ class UIManager():
                                 help_url = manga.data['url'].split('/')[2]
                                 img_url = 'https://' + help_url + img_url
 
-                            req = urllib.request.Request(img_url, headers=hdr)
-                            with urllib.request.urlopen(req) as response:
-                                image = response.read()
+                            with requests.get(img_url, headers=hdr) as req:
+                                image = req.content
+                                
                             pixmap.loadFromData(image)
                         except:
                             pixmap.load('./img/image_placeholder.jpg')
