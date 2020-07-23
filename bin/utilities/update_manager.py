@@ -23,7 +23,7 @@ class UpdateManager():
     def __init__(self):
         self.current_version_date = self.__read_version().split(', ')
         self.current_version = self.current_version_date[0]
-        self.current_date = self.current_version_date[1]
+        self.current_date = self.current_version_date[1].replace('\n', '')
         self.current_date = datetime.datetime.strptime(
             self.current_date,'%Y-%m-%d %H:%M:%S%z')
 
