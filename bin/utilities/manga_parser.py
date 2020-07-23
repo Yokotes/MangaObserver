@@ -15,7 +15,7 @@
 #========================================================================== 
 
 from lxml import html
-import urllib.request
+import requests
 from .file_builder import File_Builder
 
 class MangaParser():
@@ -29,9 +29,7 @@ class MangaParser():
         data = ''
         try:
             tree = html.fromstring(page)
-            # tree = etree.parse(page, html_parser)
-            # tree = ElementTree.parse(page, html_parser)
-            # print(tree)
+
             data = {
                 'title': (tree.xpath(manga_site.xpaths['title'])[0]).text if tree.xpath(manga_site.xpaths['title']) else url,
                 'info': {
@@ -55,9 +53,8 @@ class MangaParser():
             'Connection': 'keep-alive'}
         data = ''
         try:
-            req = urllib.request.Request(url, headers=hdr)
-            with urllib.request.urlopen(req) as response:
-                data = response.read()
+            with requests.get(url, headers=hdr) as req:
+                data = req.content
             return data
         except: 
             return None
