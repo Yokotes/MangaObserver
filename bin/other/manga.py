@@ -33,7 +33,9 @@ class Manga():
         if result != '':
             self.data['name'] = result['title']
 
-            if old_data != result['info']['latest']:
+            if (old_data != result['info']['latest'] and 
+                result['info']['latest'] != "Can't get a latest"):
+                
                 latests_list.append(self.data['name'] + '\n('+ self.site.name+')')
 
             self.data['info']['latest'] = result['info']['latest']
@@ -51,5 +53,9 @@ class Manga():
                     'latest': self.data['info']['latest'] 
                 }
             }
+
             # Write data to the manga.json file
-            if old_data != result['info']['latest'] or self.data['name'] == 'New item': self.fb.writeToFile('./data/manga.json', file_data)
+            if (old_data != result['info']['latest'] or self.data['name'] == 'New item'): 
+                if result['info']['latest'] != "Can't get a latest":
+                    self.fb.writeToFile('./data/manga.json', file_data)
+                

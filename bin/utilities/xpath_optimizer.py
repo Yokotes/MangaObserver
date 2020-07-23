@@ -16,6 +16,7 @@
 
 from lxml import html
 import urllib
+import requests
 
 class XpathOptimizer():
     
@@ -115,9 +116,11 @@ class XpathOptimizer():
             'Connection': 'keep-alive'}
         data = None
         try:
-            req = urllib.request.Request(url, headers=hdr)
-            with urllib.request.urlopen(req) as response:
-                data = response.read()
+            with requests.get(url, headers=hdr) as req:
+                data = req.content
+            # req = urllib.request.Request(url, headers=hdr)
+            # with urllib.request.urlopen(req) as response:
+            #     data = response.read()
             return data
         except: 
             return None
