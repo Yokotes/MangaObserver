@@ -22,7 +22,6 @@ import webbrowser
 from ..utilities.file_builder import File_Builder
 from ..utilities.xpath_optimizer import XpathOptimizer
 import time
-import urllib
 import requests
 
 class UIManager():
@@ -113,9 +112,7 @@ class UIManager():
 
                             with requests.get(img_url, headers=hdr) as req:
                                 image = req.content
-                            # req = urllib.request.Request(img_url, headers=hdr)
-                            # with urllib.request.urlopen(req) as response:
-                            #     image = response.read()
+                                
                             pixmap.loadFromData(image)
                         except:
                             pixmap.load('./img/image_placeholder.jpg')
